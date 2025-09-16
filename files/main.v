@@ -29,10 +29,10 @@ module main (
 
 	// -- INTERMEDIATE WIRES
 
-	wire        CLK25;
+	wire        CLK25, CLK1;
 	wire [7:0]  PIXEL_IN, PIXEL_OUT, RAM_PIXEL_DATA, ROM_PIXEL_DATA, PIXEL_DATA;
 	wire [14:0] ROM_ADDRESS;
-	wire [16:0] W_ADDR;
+	wire [16:0] W_ADDR, VGAR_ADDR;
 	wire [1:0]  IMAGE_STATE, ALGORITHM;
 	wire [9:0]  NEXT_X, NEXT_Y;
 	wire        CUR_COORD_STATE;
@@ -42,7 +42,8 @@ module main (
 	vga_clock vga_clock_inst (
 		.CLK_IN(CLK),
 		.RESET(RESET_N),
-		.CLK_OUT(CLK25)
+		.CLK_OUT_25(CLK25),
+		.CLK_OUT_1(CLK1)
 	);
 	
 	vga_module vga_module_inst (
@@ -71,13 +72,14 @@ module main (
 		.X_CUR_COORD(NEXT_X),
 		.Y_CUR_COORD(NEXT_Y),
 		.CUR_COORD_STATE(CUR_COORD_STATE),
-		.R_ADDR(ROM_ADDRESS_VGA)
+		.R_ADDR(VGAR_ADDR)
 	);
 	
 	zoom_controller (
-		.CLK(CLK),
+		.CLK(CLK1),
 		.RESET(RESET_N),
 		.SELECT(ALGORITHM_SELECTOR),
+		.zoom_requested(1'b0), // given by main FSM
 		.ALGORITHM(ALGORITHM),
 		.IMAGE_STATE(IMAGE_STATE)
 	);
@@ -91,13 +93,11 @@ module main (
 		.q(PIXEL_IN)
 	);
 	
-	wire [14:0] ROM_ADDRESS_VGA;
-	
 	// test a single ROM block
 	
 	ROMInit ROM_to_VGA (
 		.clock(CLK),
-		.address(ROM_ADDRESS_VGA),
+		.address(VGAR_ADDR[14:0]),
 		.q(ROM_PIXEL_DATA)
 	);
 	
@@ -106,7 +106,7 @@ module main (
 		.wren(1'b1), // link with the main FSM 
 		.wraddress(W_ADDR),
 		.data(PIXEL_OUT),
-		.rdaddress(ROM_ADDRESS_VGA),
+		.rdaddress(VGAR_ADDR),
 		.q(RAM_PIXEL_DATA)
 	);
 	

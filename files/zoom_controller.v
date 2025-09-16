@@ -3,6 +3,7 @@ module zoom_controller (
 	input CLK,
 	input RESET,
 	input SELECT,
+	input zoom_requested,
 	
 	output reg [1:0] ALGORITHM,
 	output reg [1:0] IMAGE_STATE
@@ -42,20 +43,14 @@ module zoom_controller (
 		if (RESET) begin
 			IMAGE_STATE <= S_DEFAULT;
 			
-		end else if (!SELECT) begin
+		end else if (zoom_requested) begin
 			
-			if ((ALGORITHM == S_NN || ALGORITHM == S_PR) && IMAGE_STATE == S_DEFAULT)           begin
+			if (ALGORITHM == S_NN || ALGORITHM == S_PR) begin
 				IMAGE_STATE <= S_ENLARGED;
-			end else if ((ALGORITHM == S_NN || ALGORITHM == S_PR) && IMAGE_STATE == S_ENLARGED) begin
-				IMAGE_STATE <= S_ENLARGED;
-			end else if ((ALGORITHM == S_NN || ALGORITHM == S_PR) && IMAGE_STATE == S_REDUCED)  begin
-				IMAGE_STATE <= S_DEFAULT;
-			end else if ((ALGORITHM == S_DC || ALGORITHM == S_BA) && IMAGE_STATE == S_DEFAULT)  begin
+			end else if (ALGORITHM == S_BA || ALGORITHM == S_DC) begin
 				IMAGE_STATE <= S_REDUCED;
-			end else if ((ALGORITHM == S_DC || ALGORITHM == S_BA) && IMAGE_STATE == S_ENLARGED) begin
+			end else begin
 				IMAGE_STATE <= S_DEFAULT;
-			end else if ((ALGORITHM == S_DC || ALGORITHM == S_BA) && IMAGE_STATE == S_REDUCED)  begin
-				IMAGE_STATE <= S_REDUCED;
 			end
 	   end
 	end

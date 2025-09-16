@@ -7,7 +7,7 @@ module image_processing (
 	
 	output reg [14:0] R_ADDR,
 	output reg [7:0]  PIXEL_OUT,
-	output reg [15:0] W_ADDR,
+	output reg [16:0] W_ADDR,
 	output reg        done
 );
 
@@ -22,7 +22,7 @@ module image_processing (
 	
 	wire [7:0]  PIXEL_OUT_NN, PIXEL_OUT_PR, PIXEL_OUT_DC, PIXEL_OUT_BA;
 	wire [14:0] R_ADDR_NN, R_ADDR_PR, R_ADDR_DC, R_ADDR_BA;
-	wire [15:0] W_ADDR_NN, W_ADDR_PR, W_ADDR_DC, W_ADDR_BA;
+	wire [16:0] W_ADDR_NN, W_ADDR_PR, W_ADDR_DC, W_ADDR_BA;
 	wire        done_NN, done_PR, done_DC, done_BA;
 
 	// -- ALGORITHMS MODULES
@@ -82,7 +82,7 @@ module image_processing (
 			default: begin
 				PIXEL_OUT = 8'b0;
 				R_ADDR = 14'b0;
-				W_ADDR = 15'b0;
+				W_ADDR = 16'b0;
 				done = 1'b0;
 			end
 		endcase
