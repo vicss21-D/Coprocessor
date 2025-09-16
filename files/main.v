@@ -1,17 +1,25 @@
 module main (
 
-	input              CLK,
-	input              RUN,
-	input              RESET,
-	input              ALGORITHM_SELECTOR, 
-   output wire [7:0]  VGA_R,
-   output wire [7:0]  VGA_G,
-   output wire [7:0]  VGA_B,
-   output wire        VGA_HS,
-   output wire        VGA_VS,
-   output wire        VGA_CLK,
-   output wire        VGA_BLANK,
-   output wire        VGA_SYNC
+	input          CLK,
+	input          RUN,
+	input          RESET,
+	input          ALGORITHM_SELECTOR, 
+	
+   output  [7:0]  VGA_R,
+   output  [7:0]  VGA_G,
+   output  [7:0]  VGA_B,
+   output         VGA_HS,
+   output         VGA_VS,
+   output         VGA_CLK,
+   output         VGA_BLANK,
+   output         VGA_SYNC,
+	
+	output  [6:0]  HEX1,
+	output  [6:0]  HEX2,
+	output  [6:0]  HEX3,
+	output  [6:0]  HEX4,
+	output  [6:0]  HEX5,
+	output  [6:0]  HEX6
 );
 
 	// -- RESET LOGIC
@@ -40,7 +48,7 @@ module main (
 	vga_module vga_module_inst (
 		.clock(CLK25),
 		.reset(RESET_N),
-      .color_in(),
+      .color_in(), //ROM_PIXEL_DATA, RAM_PIXEL_DATA
       .red(VGA_R),
       .green(VGA_G),
       .blue(VGA_B),
@@ -74,6 +82,9 @@ module main (
 		.IMAGE_STATE(IMAGE_STATE)
 	);
 	
+	// test a single ROM block
+
+	
 	ROMInit ROMInit_inst (
 		.address(ROM_ADDRESS),
 		.clock(CLK),
@@ -81,6 +92,8 @@ module main (
 	);
 	
 	wire [14:0] ROM_ADDRESS_VGA;
+	
+	// test a single ROM block
 	
 	ROMInit ROM_to_VGA (
 		.clock(CLK),
@@ -90,7 +103,7 @@ module main (
 	
 	RAMProc RAMProc_inst (
 		.clock(CLK),
-		.wren(1'b1),
+		.wren(1'b1), // link with the main FSM 
 		.wraddress(W_ADDR),
 		.data(PIXEL_OUT),
 		.rdaddress(ROM_ADDRESS_VGA),
@@ -105,7 +118,17 @@ module main (
 		.PIXEL_OUT(PIXEL_OUT),
 		.R_ADDR(ROM_ADDRESS),
 		.W_ADDR(W_ADDR),
-		.done()
+		.done() // link with the main FSM
+	);
+	
+	display display_inst(
+		.ALGORITHM(ALGORITHM),
+		.HEX1(HEX1),
+		.HEX2(HEX2),
+		.HEX3(HEX3),
+		.HEX4(HEX4),
+		.HEX5(HEX5),
+		.HEX6(HEX6)
 	);
 
 endmodule

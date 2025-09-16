@@ -8,13 +8,20 @@ module block_averaging_2x (
     input wire clk,              // Sinal de clock
     input wire reset_n,          // Sinal de reset assíncrono (ativo baixo)
     input wire start,            // Sinal para iniciar o processo
-    input wire [7:0] pixel_in,   // Pixel de 8 bits da imagem de entrada
-
-    // Saídas
+    input wire [7:0] pixel_in,	 // Pixel de 8 bits da imagem de entrada
+	 
+	 output reg [14:0] read_addr,
+	 output reg [16:0] write_addr,
     output reg [7:0] pixel_out,     // Pixel de 8 bits da imagem de saída (média)
     output reg done,                // Sinal de conclusão
     output reg [1:0] pixel_count   // Contador para os 4 pixels lidos
 );
+
+	 localparam IMG_WIDTH_IN = 160;
+	 localparam IMG_HEIGHT_IN = 120;
+	 localparam IMG_WIDTH_OUT = 80;
+	 localparam IMG_HEIGHT_OUT = 60;
+	 localparam IMG_SIZE_OUT = IMG_WIDTH_OUT * IMG_HEIGHT_OUT;
 
     // Definição dos estados da FSM interna
     localparam IDLE_STATE      = 2'b00;
@@ -37,6 +44,7 @@ module block_averaging_2x (
                     // Aguarda o sinal 'start'
                     if (start) begin
                         state <= FETCH_PIXELS;
+								write_addr <= 16'b0;
                         pixel_count <= 2'b00;
                         pixel_sum <= 10'b0; // Reseta a soma
                         done <= 1'b0;
