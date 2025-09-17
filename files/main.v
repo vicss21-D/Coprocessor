@@ -30,7 +30,7 @@ module main (
 	// -- INTERMEDIATE WIRES
 
 	wire        CLK25, CLK1;
-	wire [7:0]  PIXEL_IN, PIXEL_OUT, RAM_PIXEL_DATA, ROM_PIXEL_DATA, PIXEL_DATA;
+	wire [7:0]  PIXEL_IN, PIXEL_OUT, RAM_PIXEL_DATA, ROM_PIXEL_DATA, PIXEL_DATA, COLOR_INFO;
 	wire [14:0] ROM_ADDRESS;
 	wire [16:0] W_ADDR, VGAR_ADDR;
 	wire [1:0]  IMAGE_STATE, ALGORITHM;
@@ -49,7 +49,7 @@ module main (
 	vga_module vga_module_inst (
 		.clock(CLK25),
 		.reset(RESET_N),
-      .color_in(), //ROM_PIXEL_DATA, RAM_PIXEL_DATA
+      .color_in(COLOR_INFO), //ROM_PIXEL_DATA, RAM_PIXEL_DATA
       .red(VGA_R),
       .green(VGA_G),
       .blue(VGA_B),
@@ -65,7 +65,8 @@ module main (
 	// -- ASSIGN THE SUITABLE COLOR
 	// ***to complete logic***
 	
-	assign COLOR_INFO = CUR_COORD_STATE ? PIXEL_DATA : 8'b0;
+	
+	assign COLOR_INFO = CUR_COORD_STATE ? RAM_PIXEL_DATA : 8'b0;
 	
 	vga_controller vga_controller_inst (
 		.IMAGE_STATE(IMAGE_STATE),
@@ -76,10 +77,11 @@ module main (
 	);
 	
 	zoom_controller (
-		.CLK(CLK1),
+		.CLK1(CLK1),
+		.CLK(CLK),
 		.RESET(RESET_N),
 		.SELECT(ALGORITHM_SELECTOR),
-		.zoom_requested(1'b0), // given by main FSM
+		.zoom_requested(1'b1), // given by main FSM
 		.ALGORITHM(ALGORITHM),
 		.IMAGE_STATE(IMAGE_STATE)
 	);

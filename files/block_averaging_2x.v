@@ -68,7 +68,6 @@ module block_averaging_2x (
                     // Calcula a média e atribui ao pixel de saída.
                     // Divisão por 4 é um bit-shift para a direita de 2 posições.
                     pixel_out <= pixel_sum >> 2;
-                    
                     // Sinaliza que o processo está completo e retorna para IDLE
                     done <= 1'b1;
                     state <= IDLE_STATE;

@@ -20,11 +20,11 @@ module vga_controller (
 
     // -- OUTPUT IMAGE SIZE
 	 
-    assign IMG_WIDTH_OUT =  (IMAGE_STATE == 3'd2) ? 320 :
-                            (IMAGE_STATE == 3'd1) ? 80  : 160;
+    assign IMG_WIDTH_OUT =  (IMAGE_STATE == 2'd2) ? 80 :
+                            (IMAGE_STATE == 2'd1) ? 320  : 160;
 
-    assign IMG_HEIGHT_OUT = (IMAGE_STATE == 3'd2) ? 240 :
-                            (IMAGE_STATE == 3'd1) ? 60  : 120;
+    assign IMG_HEIGHT_OUT = (IMAGE_STATE == 2'd2) ? 60 :
+                            (IMAGE_STATE == 2'd1) ? 240  : 120;
 									
     // -- OFFSET CALCULATION
 	 
