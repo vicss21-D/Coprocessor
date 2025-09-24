@@ -113,6 +113,29 @@ module data_processing (
 			state <= next_state;
 		
 	end
+	
+	// - Counters
+	
+	always @(posedge CLK or posedge RESET) begin
+        if (RESET) begin
+            x_counter <= 0;
+            y_counter <= 0;
+        end else begin
+          
+            if (state == S_IDLE && next_state == S_FETCH) begin
+                x_counter <= 0;
+                y_counter <= 0;
+
+            end else if (state == S_UPDATE) begin
+                if (x_counter < IMG_WIDTH_OUT - 1) begin
+                    x_counter <= x_counter + 1;
+                end else begin
+                    x_counter <= 0;
+                    y_counter <= y_counter + 1;
+                end
+            end
+        end
+    end
 
 	always@(*) begin
 	
@@ -154,24 +177,14 @@ module data_processing (
 			end
 			
 			S_UPDATE: begin
-			
-				if (x_counter < IMG_WIDTH_OUT - 1) begin
-					x_counter = x_counter + 1;
-					
-				end else begin
 				
-					x_counter = 0;
-					y_counter = y_counter + 1;
-					
-				end
-				
-                if (y_counter >= IMG_HEIGHT_OUT && x_counter == 0)
-					 
-                    next_state = S_DONE;
-						  
-                else
-					 
-                    next_state = S_FETCH;
+				 if (y_counter >= IMG_HEIGHT_OUT - 1 && x_counter >= IMG_WIDTH_OUT - 1)
+				 
+					  next_state = S_DONE;
+					  
+				 else
+				 
+					  next_state = S_FETCH;
 			end
 			
 			S_DONE: begin
