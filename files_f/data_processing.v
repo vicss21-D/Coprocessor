@@ -152,8 +152,7 @@ module data_processing (
 			S_IDLE: begin
 			
 				if (enable) begin
-					x_counter = 0;
-					y_counter = 0;
+			
 					next_state = S_FETCH;
 					
 				end
