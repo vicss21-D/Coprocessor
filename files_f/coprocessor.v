@@ -62,7 +62,7 @@ module coprocessor (
 	);
 	
 	vga_module vga_module_inst (
-		.clock(CLK25),
+		.clock(!CLK25),
 		.reset(RESET_N),
       .color_in(COLOR_INFO),
       .red(VGA_R),
@@ -77,6 +77,7 @@ module coprocessor (
       .next_y(NEXT_Y)
 	);
 	
+	wire [7:0] COLOR_INFO;
 	wire [7:0] VGA_SOURCE;
 	assign VGA_SOURCE = VGA_SOURCE_SELECT ? RAM_PIXEL_DATA : ROM_PIXEL_DATA;
 	assign COLOR_INFO = CUR_COORD_STATE   ? VGA_SOURCE : 8'b0;
@@ -97,6 +98,8 @@ module coprocessor (
 		.button_in(!ALGORITHM_SELECTOR),
 		.button_out(SELECT_DBC)
 	);
+	
+	wire CLK1;
 	
 	zoom_controller zoom_controller_inst (
 		.CLK(CLK),
@@ -121,6 +124,15 @@ module coprocessor (
 		.clock(CLK),
 		.address(VGAR_ADDR[14:0]),
 		.q(ROM_PIXEL_DATA)
+	);
+	
+	wire CLK100;
+	
+	PLL100MHz_0002 pll100mhz_inst (
+		.refclk   (CLK),   //  refclk.clk
+		.rst      (RESET_N),      //   reset.reset
+		.outclk_0 (CLK100), // outclk0.clk
+		.locked   ()    //  locked.export
 	);
 	
 	RAMProc RAMProc_inst (
